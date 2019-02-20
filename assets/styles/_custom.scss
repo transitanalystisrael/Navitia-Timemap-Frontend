@@ -1,0 +1,249 @@
+
+    $enable-grid-classes:       false;
+    @import "~jquery-toggles/css/toggles-full.css";
+    @import "~leaflet/dist/leaflet.css";
+    @import "~jquery-ui/themes/base/all.css";
+
+    $primary-color: #45a31f;
+    $nav-front-color: $primary-color;
+    $font-color: black;//#595D5C;
+    $nav-front-hover-font-color: #f2f2f2;
+    $nav-back-color: #9CA3A0;
+    $nav-button-font-color: black;
+    $button-container-color: #DEE8E5;
+    $direction-toggle-selected-color: $primary-color;
+
+    $general-font-size: 16px;
+
+    html,
+    body{
+        direction: rtl;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        font-size: $general-font-size;
+        font-weight: 500;
+        font-family: Arial, Helvetica, sans-serif;
+        color: $font-color;
+    }
+
+    .container {
+        display: grid;
+        height: 100%;
+        grid-template-rows: 10fr 90fr;
+        .controls-container {
+            display: grid;
+            height: 100%;
+            grid-template-rows: repeat(auto-fill, 1fr);
+            .nav-container {
+                display: grid;
+                height: 100%;
+                grid-template-columns: 2fr 3fr;
+                background-color: $nav-back-color;
+                .nav-button-container {
+                    display: grid;
+                    height: 100%;
+                    grid-template-columns: 4fr 4fr;
+                    .home-about-container {
+                        display: grid;
+                        height: 100%;
+                        grid-template-columns: 1fr 1fr 1fr;
+                    }
+                    cursor: pointer;
+                    .nav-button {
+                        height: 100%;
+                        background-color: $nav-back-color;
+                        color: $nav-button-font-color;
+                        border-style: none;
+                        font-size: 1em;
+                        font-weight: bolder;
+                        &:hover {
+                            color: $nav-front-hover-font-color;
+                            cursor: pointer;
+                        }
+                    }
+                    .nav-button.main-button {
+                        color: $nav-front-hover-font-color;
+                        text-align: center;
+                        vertical-align: middle;
+                        text-decoration: none;
+                        background-color: $nav-front-color;
+                        font-size: 1.2em;
+                        font-weight: bold;
+                        &:hover {
+                            color: $font-color;
+                        }
+                    }
+
+                }
+            }
+            .about-container {
+                #about {
+                    direction: ltr;
+                    padding: 8px 20px;
+                    font: 18px/20px Arial, Helvetica, sans-serif;
+                    background: white;
+                    border-radius: 5px;
+                }
+            }
+            .buttons-container {
+                display: grid;
+                grid-template-columns: 2fr 1fr 2.5fr 3fr 1.5fr;
+                align-items: center;
+                background-color: $button-container-color;
+                .button-label {
+                    display: block;
+                    margin: auto;
+                    &.minutes {
+                        margin-right: 0px;
+                        padding-bottom: 0.5em;
+                    }
+                }
+                .button-container{
+                    display: grid;
+                    grid-template-rows: 1fr 1fr;
+                    vertical-align: center;
+                    justify-content: center;
+                    .mode-container {
+                        cursor: default;
+                        display: grid;
+                        grid-template-columns: 1.5fr 1fr 1fr;
+                        .title {
+                            font-size: $general-font-size;
+                            background: aqua;
+                        }
+                    }
+                    &.slider{
+                        direction: rtl;
+                        margin: 0 2em 0 0em;
+                        display: flex;
+                        flex-direction: column;
+                        .time-slider-container {
+                            flex-grow: 1;
+                            align-items: center;
+                            #timeSlider {
+                                #custom-handle {
+                                    width: 3em;
+                                    height: 1.6em;
+                                    text-align: center;
+                                    line-height: 1.6em;
+                                    margin-top: -.2em;
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .run-button-container {
+                    margin-left: 5px;
+                    display: flex;
+                    min-height: 2em;
+                    justify-content: space-around;
+                    padding: 5px;
+                    height: 80%;
+                    #runButton {
+                        background: $nav-back-color;
+                        margin:5px;
+                        flex-grow: 1;
+                        justify-self: center;
+                        align-self: center;
+                        border: 1px solid $font-color;
+                        width: 3em;
+                        height: 80%;
+                        color: $font-color;
+                        font-weight: bolder;
+                        &.invalidated {
+                            background: $nav-front-color;
+                        }
+                    }
+                    #spinner {
+                        margin: 5px;
+                        border: 0.5em solid #f3f3f3;
+                        border-radius: 50%;
+                        border-top: 0.5em solid #3498db;
+                        width: 1em;
+                        height: 1em;
+                        -webkit-animation: spin 2s linear infinite; /* Safari */
+                        animation: spin 2s linear infinite;
+
+                        /* Safari */
+                        @-webkit-keyframes spin {
+                            0% {
+                                -webkit-transform: rotate(0deg);
+                            }
+                            100% {
+                                -webkit-transform: rotate(360deg);
+                            }
+                        }
+
+                        @keyframes spin {
+                            0% {
+                                transform: rotate(0deg);
+                            }
+                            100% {
+                                transform: rotate(360deg);
+                            }
+                        }
+                    }
+                }
+                #datetimepicker {
+                    direction: ltr;
+                    justify-self: center;
+
+                }
+            }
+        }
+        .map-container {
+
+        #map {
+            height: 100% !important;
+        }
+        .legend {
+            direction: ltr;
+            //line-height: 18px;
+            //color: #555;
+            //background-color: white;
+            border: solid 1px;
+            height: auto;
+            max-width: 100px;
+            text-align: center;
+            line-height: 18px;
+            color: #555;
+            background: white;
+            background: rgba(255,255,255,0.8);
+            padding: 6px 8px;
+            border-radius: 5px;
+        }
+
+            .legend h3 {margin: 0px 0px 5px 0px;}
+        .legend i {
+            width: 1.2em;
+            height: 1.2em;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+
+        .go-to-button {
+            width: 10em;
+            height: 6em;
+            background-color: $primary-color;
+            font-weight: bolder;
+            white-space:normal;
+        }
+
+        .popup-link {
+            cursor:pointer;
+            color:blue;
+            text-decoration:underline;
+        }
+    }
+        .grid > * {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+

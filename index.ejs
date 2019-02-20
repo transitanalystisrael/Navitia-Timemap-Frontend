@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<!--<script type="text/javascript" src="https://s3.eu-central-1.amazonaws.com/transitanalystisrael/docs/tool_descriptions_e.js"></script>-->
+<!--<script type="text/javascript" src="https://s3.eu-central-1.amazonaws.com/transitanalystisrael/docs/tool_descriptions_h.js"></script>-->
+<script src="../docs/transitanalystisrael_config.js" ></script>
+<script src="../docs/tool_descriptions_e.js" ></script>
+<script src="../docs/tool_descriptions_h.js" ></script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>מפת ניידות בישראל</title>
+    <link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.ico" />
+
+</head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-130620396-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-130620396-1');
+</script>
+
+<body>
+<div class="container">
+    <div class="controls-container">
+        <div class="nav-container">
+            <div class="nav-button-container ">
+                    <button class="nav-button main-button" id="selfBtn">מפת ניידות בישראל</button>
+                <div class="home-about-container">
+                    <button class="nav-button" id="homeBtn">דף הבית</button>
+                    <button class="nav-button" id="aboutBtn" type="button">אודות - About</button>
+                </div>
+            </div>
+        </div>
+        <div class="about-container" style="display: none;">
+            <div id="about">
+                <table id="aboutTable" style="width:100%">
+                    <tr>
+                        <th id="aboutE" style="width:50%; text-align: left; font-weight: normal;"></th>
+                        <th id="aboutH" style="width:50%; text-align: right; font-weight: normal; direction: rtl;"></th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="buttons-container">
+            <div class="button-container">
+                <label class="button-label" type="label">תאריך ושעה</label>
+                <input id="datetimepicker" type="text"></input>
+            </div>
+            <div class="button-container">
+                <label class="button-label" type="label">קביעת כיוון הנסיעה</label>
+                <div id="switchButton" class="toggle toggle-light"></div>
+            </div>
+            <div class="button-container">
+                <label class="button-label" type="label">אופן ההתניידות</label>
+                <div class="mode-container">
+                    <label class="mode-button-container transit" title="Starting and finishing the journey by walking.
+                    Journey may include several PT means.">
+                        <input class="modeButton" name="transitMode" id="transit" type="radio" value="transit">תחבורה ציבורית</input>
+                    </label>
+                    <label class="mode-button-container walking" title="Journey includes walking only.">
+                        <input class="modeButton"  name="transitMode" id="walk" type="radio" value="walking">הליכה</input>
+                    </label>
+                    <label class="mode-button-container bike" title="Journey includes cycling only.">
+                        <input class="modeButton"  name="transitMode" id="bike" type="radio" value="bike">אופניים</input>
+                    </label>
+                </div>
+            </div>
+            <div class="button-container slider">
+                <label class="button-label minutes" type="label">זמן הגעה כולל בדקות</label>
+                <div class="time-slider-container">
+                    <div id="timeSlider">
+                        <div id="custom-handle" class="ui-slider-handle"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="run-button-container">
+                <button id="runButton">חשב</button>
+                <div id="spinner" style="display: none"></div>
+            </div>
+        </div>
+    </div>
+    <div class="map-container">
+            <div id="map"></div>
+    </div>
+</div>
+
+</body>
+</html>
