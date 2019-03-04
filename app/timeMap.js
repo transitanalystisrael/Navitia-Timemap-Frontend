@@ -21,9 +21,9 @@ var starting_location;
 var default_starting_zoom = 13;
 var goToHeatLayerButtonDiv;
 
-// var navitia_server_url= "https://ll7ijshrc0.execute-api.eu-central-1.amazonaws.com/NavitiaTimeMap/default";
-var navitia_server_url= "https://ll7ijshrc0.execute-api.eu-central-1.amazonaws.com/NavitiaTimeMap/";
-// Load from transitanalystisrael_config the data version: current or past
+// Load from transitanalystisrael_config the data version: current or past and the server url
+var navitia_server_url= cfg_time_map_server_url;
+
 if (cfg_current_or_past == "current") {
     navitia_server_url = navitia_server_url + "default"
 } else {
