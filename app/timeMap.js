@@ -24,15 +24,32 @@ var goToHeatLayerButtonDiv;
 // Load from transitanalystisrael_config the data version: current or past and the server url
 var navitia_server_url= cfg_time_map_server_url;
 
-if (cfg_current_or_past == "current") {
-    navitia_server_url = navitia_server_url + "default"
+if (cfg_get_service_date == "on_demand") {
+    navitia_server_url = navitia_server_url + cfg_on_demand_coverage_prefix + cfg_gtfsdate
 } else {
+    //For automatic update deployment, we're always working with the secondary-cov for both current and past
+    //with different default date and without blocking user selection on the calendar
     navitia_server_url = navitia_server_url + "secondary-cov"
 }
+
 var navitia_server_url_heat_maps = navitia_server_url +  "/heat_maps"
 var resolution = "750";
 var date_time_picker;
 
+//About - getting from the outer JS.
+//Overriding service date Period
+var navitia_service_start_date
+var navitia_service_end_date
+d3fetch.json(navitia_server_url).then(function (data) {
+    var navitia_service_start_date = data.regions[0].start_production_date;
+    var start_date_formatted =  moment(navitia_service_start_date, "YYYYMMDD").format("ddd MMM DD YYYY")
+    var navitia_service_end_date = data.regions[0].end_production_date;
+    var end_date_formatted =  moment(navitia_service_end_date, "YYYYMMDD").format("ddd MMM DD YYYY")
+    var servicePeriodE = '<br><br>Service Week Analyzed : '+ start_date_formatted +' to '+ end_date_formatted ;
+    var servicePeriodH = '<br><br>תקופת השירות שנותחה'+' : '+  start_date_formatted +' - '+end_date_formatted;
+    document.getElementById("aboutE").innerHTML = descEtool10 + servicePeriodE + logos;
+    document.getElementById("aboutH").innerHTML = descHtool10 + servicePeriodH + logos;
+});
 
 //Creating the grey icon
 var geryIcon = new L.Icon({
@@ -500,21 +517,6 @@ map.on('popupopen', function(e) {
 });
 
 
-//About - getting from the outer JS.
-//Overriding service date Period
-var navitia_service_start_date
-var navitia_service_end_date
-d3fetch.json(navitia_server_url).then(function (data) {
-    var navitia_service_start_date = data.regions[0].start_production_date;
-    var start_date_formatted =  moment(navitia_service_start_date, "YYYYMMDD").format("ddd MMM DD YYYY")
-    var navitia_service_end_date = data.regions[0].end_production_date;
-    var end_date_formatted =  moment(navitia_service_end_date, "YYYYMMDD").format("ddd MMM DD YYYY")
-    var servicePeriodE = '<br><br>Service Week Analyzed : '+ start_date_formatted +' to '+ end_date_formatted ;
-    var servicePeriodH = '<br><br>תקופת השירות שנותחה'+' : '+  start_date_formatted +' - '+end_date_formatted;
-    document.getElementById("aboutE").innerHTML = descEtool10 + servicePeriodE + logos;
-    document.getElementById("aboutH").innerHTML = descHtool10 + servicePeriodH + logos;
-});
-
 
 var showAbout = true;
 $('#aboutBtn').on("click", function(){
@@ -560,12 +562,8 @@ legend.addTo(map);
 //Creating the default map after getting the date
 function getdate_and_generateHeatMap(){
     d3fetch.json(navitia_server_url).then(function (data) {
-        var navitia_service_start_date = data.regions[0].start_production_date;
         // Get the next Sunday for default starting date
-        var start_date = moment(navitia_service_start_date, "YYYYMMDD")
-        if (start_date.day() != 0) {
-            start_date = start_date.add(1, 'weeks').isoWeekday(0);
-        }
+        var start_date = startD
         var navitia_service_end_date = data.regions[0].end_production_date;
         var end_date  = moment(navitia_service_end_date, "YYYYMMDD")
         date_time_picker = $('#datetimepicker').datetimepicker({
