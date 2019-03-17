@@ -562,9 +562,10 @@ legend.addTo(map);
 //Creating the default map after getting the date
 function getdate_and_generateHeatMap(){
     d3fetch.json(navitia_server_url).then(function (data) {
-        // Get the next Sunday for default starting date
+        // Get the start date from the descriptions to be like other tools start date
         var start_date = startD
         var navitia_service_end_date = data.regions[0].end_production_date;
+        // end date is at the end of production service
         var end_date  = moment(navitia_service_end_date, "YYYYMMDD")
         date_time_picker = $('#datetimepicker').datetimepicker({
             formatDate: 'd.m.Y',
