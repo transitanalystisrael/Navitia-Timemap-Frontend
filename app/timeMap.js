@@ -562,22 +562,24 @@ legend.addTo(map);
 //Creating the default map after getting the date
 function getdate_and_generateHeatMap(){
     d3fetch.json(navitia_server_url).then(function (data) {
+        var navitia_service_start_date = data.regions[0].start_production_date;
         // Get the start date from the descriptions to be like other tools start date
-        var start_date = startD
+        var selected_date = startD
         var navitia_service_end_date = data.regions[0].end_production_date;
         // end date is at the end of production service
         var end_date  = moment(navitia_service_end_date, "YYYYMMDD")
         date_time_picker = $('#datetimepicker').datetimepicker({
             formatDate: 'd.m.Y',
             formatTime: 'H:i',
-            minDate: moment(start_date).format('DD.MM.YYYY'),
+            // default_Date: moment(navitia_service_start_date).format('DD.MM.YYYY'),
+            minDate: moment(navitia_service_start_date).format('DD.MM.YYYY'),
             maxDate: moment(end_date).format('DD.MM.YYYY'),
             showSecond: false,
             step: 30,
         });
 
         //Default time
-        date_time_picker.val(moment(start_date).format('YYYY/MM/DD') + (' 08:00'));
+        date_time_picker.val(moment(selected_date).format('YYYY/MM/DD') + (' 08:00'));
         generateHeatMap()
     })
 }
