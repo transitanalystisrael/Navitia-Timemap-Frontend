@@ -22,8 +22,13 @@ var default_starting_zoom = 13;
 var goToHeatLayerButtonDiv;
 
 // Load from transitanalystisrael_config the data version: current or past and the server url
-var navitia_server_url= cfg_time_map_server_url;
+var navitia_server_url=  ""
 
+if (cfg_ttm_server_on == "local_pc") {
+    navitia_server_url = cfg_time_map_server_local_url
+} else if (cfg_ttm_server_on == "aws_ec2") {
+    navitia_server_url = cfg_time_map_server_aws_url
+}
 if (cfg_get_service_date == "on_demand") {
     navitia_server_url = navitia_server_url + cfg_on_demand_coverage_prefix + cfg_gtfsdate
 } else {
@@ -65,9 +70,15 @@ function createMap() {
     map = L.map('map', {renderer: new L.canvas()})
         .setView([32.07050190954199,34.8427963256836], default_starting_zoom)
 
+    map.createPane('labels');
+    map.getPane('labels').style.zIndex = 650;
+    map.getPane('labels').style.pointerEvents = 'none';
+
+
     var tileLayers = makeTileLayers();
     tileLayers[getDefaultLayerName()].addTo(map);
     L.control.layers(tileLayers).addTo(map);
+
 
     //Add scale
     L.control.scale().addTo(map);
@@ -97,22 +108,25 @@ function getDefaultLayerName() {
 function makeTileLayers() {
     return {
         '(Stamen Toner Lite) רקע שחור-לבן':
-            L.tileLayer.provider('Stamen.TonerLite', {
-            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>,' +
-                ' <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy;' +
-                ' <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' +
-                '<br>' +
-                'Transit data provided by <a href="http://miu.org.il/">Merhav</a>' +
-                ' and processed by <a href="https://github.com/CanalTP/navitia">Navitia</a> '
-        }),
-        '(OSM) רקע צבעוני':
-            L.tileLayer.provider('OpenStreetMap.Mapnik', {
-                attribution: 'Map tiles & data  &copy;' +
+            L.layerGroup([
+                L.tileLayer.provider('Stamen.TonerLite', {
+                attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>,' +
+                    ' <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy;' +
                     ' <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' +
                     '<br>' +
                     'Transit data provided by <a href="http://miu.org.il/">Merhav</a>' +
                     ' and processed by <a href="https://github.com/CanalTP/navitia">Navitia</a> '
-            }),
+                }),
+                L.tileLayer.provider('Stamen.TonerLabels', {
+                    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>,' +
+                        ' <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy;' +
+                        ' <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' +
+                        '<br>' +
+                        'Transit data provided by <a href="http://miu.org.il/">Merhav</a>' +
+                        ' and processed by <a href="https://github.com/CanalTP/navitia">Navitia</a> ',
+                    pane: 'labels'
+                })
+        ]),
         '(OSM) רקע שחור-לבן':
             L.tileLayer.provider('OpenStreetMap.BlackAndWhite', {
                 attribution: 'Map tiles & data  &copy;' +
@@ -121,7 +135,16 @@ function makeTileLayers() {
                     'Transit data provided by <a href="http://miu.org.il/">Merhav</a>' +
                     ' and processed by <a href="https://github.com/CanalTP/navitia">Navitia</a> '
             }),
+        '(OSM) רקע צבעוני':
+            L.tileLayer.provider('OpenStreetMap.Mapnik', {
+                attribution: 'Map tiles & data  &copy;' +
+                    ' <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' +
+                    '<br>' +
+                    'Transit data provided by <a href="http://miu.org.il/">Merhav</a>' +
+                    ' and processed by <a href="https://github.com/CanalTP/navitia">Navitia</a> '
+            }),
     };
+
 };
 
 
@@ -263,8 +286,8 @@ function computeColorFromDuration (duration) {
 
     //compute color
     hslColor = new tinycolor(colorMap.get(selectedRange));
-    ratioForLuminace = 50 - Math.round((duration / selectedRange) * 50 );
-    hslColor.lighten(ratioForLuminace);
+    ratioForLuminace = 60 - Math.round((duration / selectedRange) * 60);
+    hslColor.brighten(ratioForLuminace);
     hslColor.toRgb();
     r = Math.round(hslColor._r);
     g = Math.round(hslColor._g);
