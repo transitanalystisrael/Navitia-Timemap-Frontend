@@ -10,6 +10,7 @@ import 'jquery-toggles';
 import 'leaflet-providers';
 import 'moment';
 import moment from "moment";
+import * as LGU from "leaflet-geometryutil"
 
 
 /** Map generation section**/
@@ -34,11 +35,12 @@ if (cfg_get_service_date == "on_demand") {
 } else {
     //For automatic update deployment, we're always working with the secondary-cov for both current and past
     //with different default date and without blocking user selection on the calendar
-    navitia_server_url = navitia_server_url + "secondary-cov"
+    navitia_server_url = navitia_server_url + cfg_secondary_custom_coverage_name
 }
 
 var navitia_server_url_heat_maps = navitia_server_url +  "/heat_maps"
 var resolution = "750";
+var number_of_cells = resolution*resolution
 var date_time_picker;
 
 //About - getting from the outer JS.
@@ -242,8 +244,6 @@ function getColorFromDuration (duration) {
     return toCssColor(computeColorFromDuration(duration));
 };
 
-
-
 //time map boundries
 var boundry1 = 900;  //15min
 var boundry2 = 1800; //30min
@@ -252,6 +252,16 @@ var boundry4=3600; //60min
 var boundry5=4500; //75min
 var boundry6=5400; //90min
 var boundry7=7200; //120min
+
+var boundry1count = 0; //15min
+var boundry2count = 0; //30min
+var boundry3count = 0; //45min
+var boundry4count = 0; //60min
+var boundry5count = 0; //75min
+var boundry6count = 0; //90min
+var boundry7count = 0; //120min
+
+var areaArray = [0.0,0.0,0.0,0.0];
 
 //colors for the heat map
 var colorMap = new Map ([
@@ -264,24 +274,30 @@ var colorMap = new Map ([
     [7200,'rgb(132, 132,132)']
 ]);
 
-
 function computeColorFromDuration (duration) {
     var r, g, b, ratioForLuminace, hslColor, selectedRange;
     //select correct range
     if (duration < boundry1) {
         selectedRange = boundry1;
+        boundry1count +=1;
     } else if (duration >= boundry1 && duration < boundry2) {
         selectedRange = boundry2;
+        boundry2count +=1;
     } else if (duration >= boundry2 && duration < boundry3) {
         selectedRange = boundry3;
+        boundry3count +=1;
     } else if (duration >= boundry3 && duration < boundry4) {
         selectedRange = boundry4;
+        boundry4count +=1;
     } else if (duration >= boundry4 && duration < boundry5) {
         selectedRange = boundry5;
+        boundry5count +=1;
     } else if (duration >= boundry5 && duration < boundry6) {
         selectedRange = boundry6;
+        boundry6count +=1;
     } else {
         selectedRange = boundry7;
+        boundry7count +=1;
     }
 
     //compute color
@@ -327,6 +343,42 @@ function loadHeatMap(heatMatrix) {
             }
         });
     });
+    
+    var matrixLat1 = heatMatrix.line_headers[0].cell_lat.min_lat;
+    var matrixLon1 = heatMatrix.lines[0].cell_lon.min_lon;
+    var matrixLat2 = heatMatrix.line_headers[resolution-1].cell_lat.max_lat; var matrixLon2 = heatMatrix.lines[0].cell_lon.min_lon;
+    var matrixLat3 = heatMatrix.line_headers[resolution-1].cell_lat.max_lat; var matrixLon3 = heatMatrix.lines[resolution-1].cell_lon.max_lon;
+    var matrixLat4 = heatMatrix.line_headers[0].cell_lat.min_lat; var matrixLon4 = heatMatrix.lines[resolution-1].cell_lon.max_lon;
+    //console.log(matrixLat1, matrixLon1);
+    //console.log(matrixLat2, matrixLon2);
+    //console.log(matrixLat3, matrixLon3);
+    //console.log(matrixLat4, matrixLon4);
+    var matrixPolygon = L.polygon([
+        [matrixLat1, matrixLon1],
+        [matrixLat2, matrixLon2],
+        [matrixLat3, matrixLon3],
+        [matrixLat4, matrixLon4]
+    ]);
+    var matrixLatLngs = matrixPolygon.getLatLngs()[0]
+    //console.log(matrixLatLngs);
+    //console.log(L);
+    //console.log(LGU);
+    //console.log(L.GeometryUtil.geodesicArea(matrixPolygon.getLatLngs()[0]) );
+    var len_a = LGU.length([matrixLatLngs[0],matrixLatLngs[1]]); // in m
+    var len_b = LGU.length([matrixLatLngs[1],matrixLatLngs[2]]);
+    var len_c = LGU.length([matrixLatLngs[2],matrixLatLngs[3]]);
+    var len_d = LGU.length([matrixLatLngs[3],matrixLatLngs[0]]);
+    var len_h = Math.sqrt(Math.pow(len_a,2)-Math.pow((len_d-len_b)/2,2));
+    var matrixArea = (len_h * (len_b+len_d)/2 )/1000000 ;// in SqKm
+    //console.log(len_h, matrixArea);
+    
+    boundry1count = 0; //15min
+    boundry2count = 0; //30min
+    boundry3count = 0; //45min
+    boundry4count = 0; //60min
+    boundry5count = 0; //75min
+    boundry6count = 0; //90min
+    boundry7count = 0; //120min
 
     var heatMapPixels = [];
     heatMatrix.lines.forEach(function(lines/*, i*/) {
@@ -351,6 +403,16 @@ function loadHeatMap(heatMatrix) {
     //Remove spinner
     $('#spinner').hide();
     invalidateRunButton();
+    
+    var area1 = matrixArea*boundry1count/number_of_cells;
+    var area2 = matrixArea*boundry2count/number_of_cells;
+    var area3 = matrixArea*boundry3count/number_of_cells;
+    var area4 = matrixArea*boundry4count/number_of_cells;
+    var area5 = matrixArea*boundry5count/number_of_cells;
+    //console.log(area1.toFixed(2),area2.toFixed(2),area3.toFixed(2),area4.toFixed(2));
+    areaArray = [area1.toFixed(2),area2.toFixed(2),area3.toFixed(2),area4.toFixed(2)];
+    console.log(areaArray.toString());
+    info.update(areaArray);
 }
 
 
@@ -580,6 +642,23 @@ legend.onAdd = function (map) {
 };
 
 legend.addTo(map);
+
+
+var info = L.control({position: 'topleft'});
+
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+    this.update(areaArray);
+    return this._div;
+};
+
+// method that we will use to update the control based on feature properties passed
+info.update = function (a) {
+    this._div.innerHTML = '<h4>SqKm Area for 15, 30, 45, 60min</h4>' + 
+    '&nbsp&nbsp&nbsp'+a[0].toString()+',  '+ a[1].toString()+',  '+ a[2].toString()+',  '+ a[3].toString();
+};
+
+info.addTo(map);
 
 
 //Creating the default map after getting the date
