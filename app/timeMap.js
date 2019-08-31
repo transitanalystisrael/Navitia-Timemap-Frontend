@@ -17,7 +17,7 @@ import * as LGU from "leaflet-geometryutil"
 var map;
 var heatMapLayerId;
 var starting_point_marker;
-var default_starting_location = [32.073443, 34.790410];
+var default_starting_location = [32.073600, 34.790000];
 var starting_location;
 var default_starting_zoom = 13;
 var goToHeatLayerButtonDiv;
@@ -405,12 +405,12 @@ function loadHeatMap(heatMatrix) {
     invalidateRunButton();
     
     var area1 = matrixArea*boundry1count/number_of_cells;
-    var area2 = matrixArea*boundry2count/number_of_cells;
-    var area3 = matrixArea*boundry3count/number_of_cells;
-    var area4 = matrixArea*boundry4count/number_of_cells;
-    var area5 = matrixArea*boundry5count/number_of_cells;
+    var area2 = matrixArea*(boundry1count+boundry2count)/number_of_cells;
+    var area3 = matrixArea*(boundry1count+boundry2count+boundry3count)/number_of_cells;
+    var area4 = matrixArea*(boundry1count+boundry2count+boundry3count+boundry4count)/number_of_cells;
+    var area5 = matrixArea*(boundry1count+boundry2count+boundry3count+boundry4count+boundry5count)/number_of_cells;
     //console.log(area1.toFixed(2),area2.toFixed(2),area3.toFixed(2),area4.toFixed(2));
-    areaArray = [area1.toFixed(2),area2.toFixed(2),area3.toFixed(2),area4.toFixed(2)];
+    areaArray = [area1.toFixed(1),area2.toFixed(1),area3.toFixed(1),area4.toFixed(1)];
     console.log(areaArray.toString());
     info.update(areaArray);
 }
@@ -442,7 +442,7 @@ function durationToString (duration) {
     if (days !== 0) { res += sprintf('%s ימים, ', days); }
     if (hours !== 0) { res += sprintf('%s שעות,  ', hours); }
     if (minutes !== 0) { res += sprintf('%s דקות ', minutes); }
-    if (seconds !== 0) { res += sprintf('ו-%s שניות', seconds); }
+    //if (seconds !== 0) { res += sprintf('ו-%s שניות', seconds); }
 
     if (! res) {
         return '0s';
@@ -654,8 +654,8 @@ info.onAdd = function (map) {
 
 // method that we will use to update the control based on feature properties passed
 info.update = function (a) {
-    this._div.innerHTML = '<h4>SqKm Area for 15, 30, 45, 60min</h4>' + 
-    '&nbsp&nbsp&nbsp'+a[0].toString()+',  '+ a[1].toString()+',  '+ a[2].toString()+',  '+ a[3].toString();
+    this._div.innerHTML = '<h4>SqKm Area for up to<br>15, 30, 45, 60 min</h4>' + 
+    a[0].toString()+',&nbsp&nbsp'+ a[1].toString()+',&nbsp&nbsp'+ a[2].toString()+',&nbsp&nbsp'+ a[3].toString();
 };
 
 info.addTo(map);
