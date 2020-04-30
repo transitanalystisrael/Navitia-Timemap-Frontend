@@ -19,7 +19,7 @@
     "bootstrap": "^4.3.1",
     "d3-fetch": "^1.1.2",
     "d3-queue": "^3.0.7",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jquery-datetimepicker": "^2.5.20",
     "jquery-toggles": "^4.0.0",
     "jquery-ui": "^1.12.1",
