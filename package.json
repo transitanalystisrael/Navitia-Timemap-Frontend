@@ -26,7 +26,7 @@
     "leaflet": "^1.4.0",
     "leaflet-geometryutil": "^0.9.1",
     "leaflet-providers": "^1.5.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "moment": "^2.24.0",
     "popper.js": "^1.14.7",
     "sprintf": "^0.1.5",
