@@ -670,6 +670,7 @@ function getdate_and_generateHeatMap(){
         var navitia_service_end_date = data.regions[0].end_production_date;
         // end date is at the end of production service
         var end_date  = moment(navitia_service_end_date, "YYYYMMDD")
+        //console.log(selected_date, end_date)
         date_time_picker = $('#datetimepicker').datetimepicker({
             formatDate: 'd.m.Y',
             formatTime: 'H:i',
@@ -679,9 +680,10 @@ function getdate_and_generateHeatMap(){
             showSecond: false,
             step: 30,
         });
-
-        //Default time
-        date_time_picker.val(moment(selected_date).format('YYYY/MM/DD') + (' 08:00'));
+        
+        var navitiaendD = new Date(navitia_service_end_date.slice(0,4), navitia_service_end_date.slice(4,6)-1, navitia_service_end_date.slice(6)); // js months are 0-11
+        //Default time - added min for the case that the navitia service period too short to get to current GTFS start date
+        date_time_picker.val(moment(Math.min(selected_date, navitiaendD)).format('YYYY/MM/DD') + (' 08:00'));
         generateHeatMap()
     })
 }
