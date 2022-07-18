@@ -22,7 +22,7 @@
     "jquery": "^3.4.1",
     "jquery-datetimepicker": "^2.5.20",
     "jquery-toggles": "^4.0.0",
-    "jquery-ui": "^1.12.1",
+    "jquery-ui": "^1.13.2",
     "leaflet": "^1.4.0",
     "leaflet-geometryutil": "^0.9.1",
     "leaflet-providers": "^1.5.0",
